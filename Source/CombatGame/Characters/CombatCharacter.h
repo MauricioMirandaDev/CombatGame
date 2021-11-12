@@ -33,4 +33,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* Camera;
+
+	// Functions for movement
+	void MoveForward(float Scale);
+
+	void MoveRight(float Scale);
 };

@@ -51,5 +51,21 @@ void ACombatCharacter::Tick(float DeltaTime)
 void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	// Movement
+	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ACombatCharacter::MoveForward);
+	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ACombatCharacter::MoveRight);
+}
+
+// Move the player forward and backward
+void ACombatCharacter::MoveForward(float Scale)
+{
+	AddMovementInput(FVector(1.0f, 1.0f, 0.0f), Scale);
+}
+
+// Move the player right and left
+void ACombatCharacter::MoveRight(float Scale)
+{
+	AddMovementInput(FVector(-1.0f, 1.0f, 0.0f), Scale);
 }
 
