@@ -3,6 +3,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACombatCharacter::ACombatCharacter()
@@ -14,6 +15,7 @@ ACombatCharacter::ACombatCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
+	bCanJump = true;
 
 	// Set default values for CharacterMovement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -32,7 +34,7 @@ ACombatCharacter::ACombatCharacter()
 	// Create a Camera and set default values
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
-	Camera->ProjectionMode = ECameraProjectionMode::Orthographic;
+	Camera->ProjectionMode = ECameraProjectionMode::Perspective;
 }
 
 // Called when the game starts or when spawned
@@ -55,6 +57,7 @@ void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// Movement
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ACombatCharacter::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ACombatCharacter::MoveRight);
+	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACombatCharacter::Jump);
 }
 
 // Move the player forward and backward
@@ -68,4 +71,15 @@ void ACombatCharacter::MoveRight(float Scale)
 {
 	AddMovementInput(FVector(-1.0f, 1.0f, 0.0f), Scale);
 }
+
+// Launch the player and play sound effect
+void ACombatCharacter::Jump()
+{
+	Super::Jump();
+
+	if (!GetCharacterMovement()->IsFalling() && bCanJump && JumpSoundEffect != nullptr)
+		UGameplayStatics::PlaySound2D(GetWorld(), JumpSoundEffect);
+}
+
+
 

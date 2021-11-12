@@ -6,6 +6,7 @@
 #include "CombatCharacter.generated.h"
 
 class UCameraComponent;
+class USoundBase;
 class USpringArmComponent;
 
 UCLASS()
@@ -27,6 +28,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// Override Jump function
+	virtual void Jump() override;
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArm;
@@ -34,8 +38,13 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* Camera;
 
-	// Functions for movement
+	// Functions and variables for movement
 	void MoveForward(float Scale);
 
 	void MoveRight(float Scale);
+
+	bool bCanJump;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Jump", meta = (AllowPrivateAccess = "true"))
+	USoundBase* JumpSoundEffect;
 };
