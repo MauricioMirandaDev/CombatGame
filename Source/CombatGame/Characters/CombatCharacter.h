@@ -8,6 +8,7 @@
 class UCameraComponent;
 class USoundBase;
 class USpringArmComponent;
+class AWeapon;
 
 UCLASS()
 class COMBATGAME_API ACombatCharacter : public ACharacter
@@ -32,13 +33,14 @@ protected:
 	virtual void Jump() override;
 
 private:
+	// Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* Camera;
 
-	// Functions and variables for movement
+	// Functions, variables, and components for movement
 	void MoveForward(float Scale);
 
 	void MoveRight(float Scale);
@@ -47,4 +49,11 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Jump", meta = (AllowPrivateAccess = "true"))
 	USoundBase* JumpSoundEffect;
+
+	// Components for combat
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AWeapon> WeaponClass;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	AWeapon* Weapon;
 };

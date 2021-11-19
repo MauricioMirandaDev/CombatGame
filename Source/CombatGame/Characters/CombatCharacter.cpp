@@ -1,6 +1,7 @@
 
 #include "CombatCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "CombatGame/Actors/Weapon.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -41,6 +42,14 @@ ACombatCharacter::ACombatCharacter()
 void ACombatCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Spawn a weapon in the world and set the player as its owner
+	if (WeaponClass)
+	{
+		Weapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass);
+		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
+		Weapon->SetOwner(this);
+	}
 }
 
 // Called every frame
@@ -77,7 +86,7 @@ void ACombatCharacter::Jump()
 {
 	Super::Jump();
 
-	if (!GetCharacterMovement()->IsFalling() && bCanJump && JumpSoundEffect != nullptr)
+	if (!GetCharacterMovement()->IsFalling() && bCanJump && JumpSoundEffect)
 		UGameplayStatics::PlaySound2D(GetWorld(), JumpSoundEffect);
 }
 
