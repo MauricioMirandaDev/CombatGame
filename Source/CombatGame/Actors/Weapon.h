@@ -5,8 +5,6 @@
 #include "GameFramework/Actor.h"
 #include "Weapon.generated.h"
 
-class USkeletalMeshComponent;
-
 UCLASS()
 class COMBATGAME_API AWeapon : public AActor
 {
@@ -29,5 +27,5 @@ private:
 	USceneComponent* Root;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* Mesh;
+	UStaticMeshComponent* Mesh;
 };

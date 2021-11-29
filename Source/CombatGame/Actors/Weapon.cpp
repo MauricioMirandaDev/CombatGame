@@ -1,6 +1,6 @@
 
 #include "Weapon.h"
-#include "Components/SkeletalMeshComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 AWeapon::AWeapon()
@@ -13,8 +13,9 @@ AWeapon::AWeapon()
 	SetRootComponent(Root);
 
 	// Create a SkeletalMesh 
-	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon Mesh"));
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(Root);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 // Called when the game starts or when spawned

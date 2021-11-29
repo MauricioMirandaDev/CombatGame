@@ -6,6 +6,7 @@
 #include "CombatCharacter.generated.h"
 
 class UCameraComponent;
+class UAnimMontage;
 class USoundBase;
 class USpringArmComponent;
 class AWeapon;
@@ -24,6 +25,13 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	// Functions for attack effects
+	void StartAttack();
+
+	void EndAttack();
+
+	void ForwardThrust();
 
 protected:
 	// Called when the game starts or when spawned
@@ -50,10 +58,22 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Jump", meta = (AllowPrivateAccess = "true"))
 	USoundBase* JumpSoundEffect;
 
-	// Components for combat
+	// Functions, variables, and components for combat
+	void LightAttackPressed();
+
+	int32 AttackCount;
+
+	bool bCanAttack;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AWeapon> WeaponClass;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	AWeapon* Weapon;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	float ForwardThrustMultiplier;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* LightAttack01;
 };

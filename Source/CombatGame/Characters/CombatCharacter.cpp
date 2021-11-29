@@ -1,10 +1,12 @@
 
 #include "CombatCharacter.h"
+#include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
 #include "CombatGame/Actors/Weapon.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 ACombatCharacter::ACombatCharacter()
@@ -17,6 +19,9 @@ ACombatCharacter::ACombatCharacter()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 	bCanJump = true;
+	AttackCount = 0;
+	bCanAttack = true;
+	ForwardThrustMultiplier = 1.0f;
 
 	// Set default values for CharacterMovement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -67,6 +72,52 @@ void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ACombatCharacter::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ACombatCharacter::MoveRight);
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACombatCharacter::Jump);
+
+	// Combat
+	PlayerInputComponent->BindAction(TEXT("LightAttack"), EInputEvent::IE_Pressed, this, &ACombatCharacter::LightAttackPressed);
+}
+
+// Modify variables at the start of the attack
+void ACombatCharacter::StartAttack()
+{
+	bCanJump = false;
+	bCanAttack = false;
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+}
+
+// Modify variables at the end of the attack
+void ACombatCharacter::EndAttack()
+{
+	bCanJump = true;
+	bCanAttack = true;
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+}
+
+// Thrust the character forward when attacking
+void ACombatCharacter::ForwardThrust()
+{
+	FLatentActionInfo LatentActionInfo;
+	LatentActionInfo.CallbackTarget = this;
+
+	FVector ForwardLocation = GetActorLocation() + (GetActorForwardVector() * ForwardThrustMultiplier);
+
+	// Before applying the forward thrust, check if the player would be forced into a wall or over an edge
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+
+	if (UKismetSystemLibrary::SphereTraceSingle(GetWorld(), ForwardLocation, ForwardLocation, 50.0f, UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_Visibility),
+		false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true) 
+		|| 
+		!GetWorld()->LineTraceSingleByChannel(HitResult, ForwardLocation, FVector(ForwardLocation.X, ForwardLocation.Y, ForwardLocation.Z - 100.0F),
+			ECollisionChannel::ECC_Visibility, QueryParams))
+	{
+		ForwardLocation = GetActorLocation();
+	}
+
+	// Apply the forward thrust
+	UKismetSystemLibrary::MoveComponentTo(GetRootComponent(), ForwardLocation, GetActorRotation(), false, false, 0.1f, false, EMoveComponentAction::Move, LatentActionInfo);
 }
 
 // Move the player forward and backward
@@ -88,6 +139,18 @@ void ACombatCharacter::Jump()
 
 	if (!GetCharacterMovement()->IsFalling() && bCanJump && JumpSoundEffect)
 		UGameplayStatics::PlaySound2D(GetWorld(), JumpSoundEffect);
+}
+
+// Perform a phase in the Light Attack combo whenver the light attack button is pressed
+void ACombatCharacter::LightAttackPressed()
+{
+	if (bCanAttack)
+	{
+		if (LightAttack01)
+		{
+			PlayAnimMontage(LightAttack01, 1.0f, TEXT("None"));
+		}
+	}
 }
 
 
