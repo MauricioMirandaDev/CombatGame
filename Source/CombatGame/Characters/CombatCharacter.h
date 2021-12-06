@@ -31,6 +31,10 @@ public:
 
 	void EndAttack();
 
+	void OpenNextAttack();
+
+	void CloseNextAttack();
+
 	void ForwardThrust();
 
 protected:
@@ -76,4 +80,10 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* LightAttack01;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* LightAttack02;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* LightAttack03;
 };

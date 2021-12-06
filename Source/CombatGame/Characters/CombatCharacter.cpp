@@ -88,9 +88,22 @@ void ACombatCharacter::StartAttack()
 // Modify variables at the end of the attack
 void ACombatCharacter::EndAttack()
 {
+	AttackCount = 0;
 	bCanJump = true;
 	bCanAttack = true;
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+}
+
+// Open time window for the next attack
+void ACombatCharacter::OpenNextAttack()
+{
+	bCanAttack = true;
+}
+
+// Close time window for the next attack
+void ACombatCharacter::CloseNextAttack()
+{
+	bCanAttack = false;
 }
 
 // Thrust the character forward when attacking
@@ -146,9 +159,24 @@ void ACombatCharacter::LightAttackPressed()
 {
 	if (bCanAttack)
 	{
-		if (LightAttack01)
+		AttackCount++;
+
+		if (LightAttack01 && LightAttack02 && LightAttack03)
 		{
-			PlayAnimMontage(LightAttack01, 1.0f, TEXT("None"));
+			switch (AttackCount)
+			{
+			case 1:
+				PlayAnimMontage(LightAttack01, 1.0f, TEXT("None"));
+				break;
+			case 2:
+				PlayAnimMontage(LightAttack02, 1.0f, TEXT("None"));
+				break;
+			case 3:
+				PlayAnimMontage(LightAttack03, 1.0f, TEXT("None"));
+				break;
+			default:
+				break;
+			}
 		}
 	}
 }
