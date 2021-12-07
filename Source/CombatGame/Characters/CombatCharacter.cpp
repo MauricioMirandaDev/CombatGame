@@ -75,6 +75,7 @@ void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	// Combat
 	PlayerInputComponent->BindAction(TEXT("LightAttack"), EInputEvent::IE_Pressed, this, &ACombatCharacter::LightAttackPressed);
+	PlayerInputComponent->BindAction(TEXT("HeavyAttack"), EInputEvent::IE_Pressed, this, &ACombatCharacter::HeavyAttackPressed);
 }
 
 // Modify variables at the start of the attack
@@ -178,6 +179,15 @@ void ACombatCharacter::LightAttackPressed()
 				break;
 			}
 		}
+	}
+}
+
+// Perform Heavy Attack
+void ACombatCharacter::HeavyAttackPressed()
+{
+	if (bCanAttack && HeavyAttack)
+	{
+		PlayAnimMontage(HeavyAttack, 1.0f, TEXT("None"));
 	}
 }
 

@@ -65,6 +65,8 @@ private:
 	// Functions, variables, and components for combat
 	void LightAttackPressed();
 
+	void HeavyAttackPressed();
+
 	int32 AttackCount;
 
 	bool bCanAttack;
@@ -86,4 +88,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* LightAttack03;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* HeavyAttack;
 };
