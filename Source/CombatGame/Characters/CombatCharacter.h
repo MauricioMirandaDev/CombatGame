@@ -59,13 +59,15 @@ private:
 
 	bool bCanJump;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Jump", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Jump", meta = (AllowPrivateAccess = "true"))
 	USoundBase* JumpSoundEffect;
 
 	// Functions, variables, and components for combat
 	void LightAttackPressed();
 
 	void HeavyAttackPressed();
+
+	void GroundSlam();
 
 	int32 AttackCount;
 
@@ -91,4 +93,13 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* HeavyAttack;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* GroundSlamAttack;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	bool bIsSlamming;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	USoundBase* GroundSlamSoundEffect;
 };

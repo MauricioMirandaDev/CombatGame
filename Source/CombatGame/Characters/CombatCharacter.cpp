@@ -22,6 +22,7 @@ ACombatCharacter::ACombatCharacter()
 	AttackCount = 0;
 	bCanAttack = true;
 	ForwardThrustMultiplier = 1.0f;
+	bIsSlamming = false;
 
 	// Set default values for CharacterMovement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -160,23 +161,28 @@ void ACombatCharacter::LightAttackPressed()
 {
 	if (bCanAttack)
 	{
-		AttackCount++;
-
-		if (LightAttack01 && LightAttack02 && LightAttack03)
+		if (GetCharacterMovement()->IsFalling())
+			GroundSlam();
+		else
 		{
-			switch (AttackCount)
+			AttackCount++;
+
+			if (LightAttack01 && LightAttack02 && LightAttack03)
 			{
-			case 1:
-				PlayAnimMontage(LightAttack01, 1.0f, TEXT("None"));
-				break;
-			case 2:
-				PlayAnimMontage(LightAttack02, 1.0f, TEXT("None"));
-				break;
-			case 3:
-				PlayAnimMontage(LightAttack03, 1.0f, TEXT("None"));
-				break;
-			default:
-				break;
+				switch (AttackCount)
+				{
+				case 1:
+					PlayAnimMontage(LightAttack01, 1.0f, TEXT("None"));
+					break;
+				case 2:
+					PlayAnimMontage(LightAttack02, 1.0f, TEXT("None"));
+					break;
+				case 3:
+					PlayAnimMontage(LightAttack03, 1.0f, TEXT("None"));
+					break;
+				default:
+					break;
+				}
 			}
 		}
 	}
@@ -187,7 +193,42 @@ void ACombatCharacter::HeavyAttackPressed()
 {
 	if (bCanAttack && HeavyAttack)
 	{
-		PlayAnimMontage(HeavyAttack, 1.0f, TEXT("None"));
+		if (GetCharacterMovement()->IsFalling())
+			GroundSlam();
+		else
+			PlayAnimMontage(HeavyAttack, 1.0f, TEXT("None"));
+	}
+}
+
+// Perform Ground Slam attack
+void ACombatCharacter::GroundSlam()
+{
+	FLatentActionInfo LatentActionInfo;
+	LatentActionInfo.CallbackTarget = this;
+
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+
+	FTimerHandle TimerHandle;
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, GetActorLocation(), FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z - 1000.0f), 
+		ECollisionChannel::ECC_Visibility, QueryParams) && GroundSlamAttack)
+	{
+		// Transition into ground slam animation
+		bIsSlamming = true;
+
+		if (GroundSlamSoundEffect)
+			UGameplayStatics::PlaySound2D(GetWorld(), GroundSlamSoundEffect);
+		
+		// Perform ground slam
+		UKismetSystemLibrary::MoveComponentTo(GetRootComponent(), HitResult.Location + FVector(0.0f, 0.0f, 90.0f), GetActorRotation(), true, true, 0.2f, false, EMoveComponentAction::Move, LatentActionInfo);
+
+		// Play finishing animation
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+		{
+			PlayAnimMontage(GroundSlamAttack, 1.0f, TEXT("None"));
+			bIsSlamming = false;
+		}, 0.1f, false);
 	}
 }
 
