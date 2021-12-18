@@ -18,14 +18,17 @@ ACombatCharacter::ACombatCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
-	bCanJump = true;
+	SetCanBeDamaged(true);
 	AttackCount = 0;
 	bCanAttack = true;
+	bCanBlock = true;
 	ForwardThrustMultiplier = 1.0f;
 	bIsSlamming = false;
+	bIsBlocking = false;
 
 	// Set default values for CharacterMovement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->SetJumpAllowed(true);
 
 	// Create a SpringArm and set default values
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
@@ -77,23 +80,27 @@ void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// Combat
 	PlayerInputComponent->BindAction(TEXT("LightAttack"), EInputEvent::IE_Pressed, this, &ACombatCharacter::LightAttackPressed);
 	PlayerInputComponent->BindAction(TEXT("HeavyAttack"), EInputEvent::IE_Pressed, this, &ACombatCharacter::HeavyAttackPressed);
+	PlayerInputComponent->BindAction(TEXT("Block"), EInputEvent::IE_Pressed, this, &ACombatCharacter::Block);
+	PlayerInputComponent->BindAction(TEXT("Block"), EInputEvent::IE_Released, this, &ACombatCharacter::EndBlock);
 }
 
 // Modify variables at the start of the attack
 void ACombatCharacter::StartAttack()
 {
-	bCanJump = false;
-	bCanAttack = false;
+	GetCharacterMovement()->SetJumpAllowed(false);
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	bCanAttack = false;
+	bCanBlock = false;
 }
 
 // Modify variables at the end of the attack
 void ACombatCharacter::EndAttack()
 {
 	AttackCount = 0;
-	bCanJump = true;
-	bCanAttack = true;
+	GetCharacterMovement()->SetJumpAllowed(true);
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	bCanAttack = true;
+	bCanBlock = true;
 }
 
 // Open time window for the next attack
@@ -152,7 +159,7 @@ void ACombatCharacter::Jump()
 {
 	Super::Jump();
 
-	if (!GetCharacterMovement()->IsFalling() && bCanJump && JumpSoundEffect)
+	if (!GetCharacterMovement()->IsFalling() && GetCharacterMovement()->IsJumpAllowed() && JumpSoundEffect)
 		UGameplayStatics::PlaySound2D(GetWorld(), JumpSoundEffect);
 }
 
@@ -230,6 +237,27 @@ void ACombatCharacter::GroundSlam()
 			bIsSlamming = false;
 		}, 0.1f, false);
 	}
+}
+
+// Block attacks
+void ACombatCharacter::Block()
+{
+	if (bCanBlock && !GetCharacterMovement()->IsFalling())
+	{
+		SetCanBeDamaged(false);
+		bIsBlocking = true;
+		bCanAttack = false;
+		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	}
+}
+
+// End blocking
+void ACombatCharacter::EndBlock()
+{
+	SetCanBeDamaged(true);
+	bIsBlocking = false;
+	bCanAttack = true;
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 
 

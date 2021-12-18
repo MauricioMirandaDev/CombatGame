@@ -57,8 +57,6 @@ private:
 
 	void MoveRight(float Scale);
 
-	bool bCanJump;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Jump", meta = (AllowPrivateAccess = "true"))
 	USoundBase* JumpSoundEffect;
 
@@ -69,9 +67,15 @@ private:
 
 	void GroundSlam();
 
+	void Block();
+
+	void EndBlock();
+
 	int32 AttackCount;
 
 	bool bCanAttack;
+
+	bool bCanBlock;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AWeapon> WeaponClass;
@@ -99,6 +103,9 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	bool bIsSlamming;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	bool bIsBlocking;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	USoundBase* GroundSlamSoundEffect;
