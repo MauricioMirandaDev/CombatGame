@@ -242,12 +242,13 @@ void ACombatCharacter::GroundSlam()
 // Block attacks
 void ACombatCharacter::Block()
 {
-	if (bCanBlock && !GetCharacterMovement()->IsFalling())
+	if (bCanBlock && !GetCharacterMovement()->IsFalling() && BlockSoundEffect)
 	{
 		SetCanBeDamaged(false);
 		bIsBlocking = true;
 		bCanAttack = false;
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+		UGameplayStatics::PlaySound2D(GetWorld(), BlockSoundEffect);
 	}
 }
 
