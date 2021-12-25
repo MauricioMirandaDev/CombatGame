@@ -17,6 +17,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// Max distance the enemy can detect the player
+	UPROPERTY(EditDefaultsOnly, Category = "Enemy Behavior")
+	float DetectionRadius;
 
 protected:
 	// Called when the game starts or when spawned

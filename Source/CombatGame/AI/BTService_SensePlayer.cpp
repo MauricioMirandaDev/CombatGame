@@ -1,5 +1,5 @@
 
-#include "BTService_SetPlayerLocation.h"
+#include "BTService_SensePlayer.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "CombatGame/Controllers/EnemyAIController.h"
 #include "CombatGame/Characters/CombatCharacter.h"
@@ -7,13 +7,13 @@
 #include "Kismet/GameplayStatics.h"
 
 // Set default values
-UBTService_SetPlayerLocation::UBTService_SetPlayerLocation()
+UBTService_SensePlayer::UBTService_SensePlayer()
 {
-	NodeName = ("Set Player Location");
+	NodeName = TEXT("Sense Player");
 }
 
 // Update next tick
-void UBTService_SetPlayerLocation::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTService_SensePlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
@@ -25,15 +25,8 @@ void UBTService_SetPlayerLocation::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	if (Self == nullptr)
 		return;
 
-	// Find dot product between player's location and enemy's forward vector
-	FVector Difference = Player->GetActorLocation() - Self->GetActorLocation(), Forward = Self->GetActorForwardVector();
-	Difference.Normalize();
-	Forward.Normalize();
-
-	float DotProd = FVector::DotProduct(Difference, Forward);
-
-	// Update player location if player is in front of enemy
-	if (DotProd > 0 && FVector::Dist(Self->GetActorLocation(), Player->GetActorLocation()) < Self->DetectionRadius && OwnerComp.GetAIOwner()->LineOfSightTo(Player))
+	// Update player location if player is wihtin detection radius
+	if (FVector::Dist(Player->GetActorLocation(), Self->GetActorLocation()) < Self->DetectionRadius)
 		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), Player->GetActorLocation());
 	else
 		OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue(GetSelectedBlackboardKey());
