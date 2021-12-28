@@ -1,6 +1,7 @@
 
 #include "CombatAnimNotify_StartAttack.h"
 #include "CombatGame/Characters/CombatCharacter.h"
+#include "CombatGame/Characters/CombatEnemy.h"
 
 // Set default values
 UCombatAnimNotify_StartAttack::UCombatAnimNotify_StartAttack()
@@ -15,4 +16,7 @@ void UCombatAnimNotify_StartAttack::Notify(USkeletalMeshComponent* MeshComp, UAn
 
 	if (Player)
 		Player->StartAttack();
+
+	if (Enemy)
+		Enemy->StartAttack();
 }

@@ -1,5 +1,6 @@
 
 #include "CombatEnemy.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ACombatEnemy::ACombatEnemy()
@@ -21,5 +22,17 @@ void ACombatEnemy::BeginPlay()
 void ACombatEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+// Modify variables at the start of the attack
+void ACombatEnemy::StartAttack()
+{
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+}
+
+// Modify variables at the end of the attack
+void ACombatEnemy::EndAttack()
+{
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 

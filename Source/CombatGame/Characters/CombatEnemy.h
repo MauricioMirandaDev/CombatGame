@@ -17,6 +17,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// Functions for attack effects
+	void StartAttack();
+
+	void EndAttack();
+
 	// Max distance the enemy can detect the player
 	UPROPERTY(EditDefaultsOnly, Category = "Enemy Behavior")
 	float DetectionRadius;
@@ -26,5 +31,4 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-
 };

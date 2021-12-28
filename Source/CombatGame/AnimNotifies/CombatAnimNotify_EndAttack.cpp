@@ -1,6 +1,7 @@
 
 #include "CombatAnimNotify_EndAttack.h"
 #include "CombatGame/Characters/CombatCharacter.h"
+#include "CombatGame/Characters/CombatEnemy.h"
 
 // Set default values
 UCombatAnimNotify_EndAttack::UCombatAnimNotify_EndAttack()
@@ -15,4 +16,7 @@ void UCombatAnimNotify_EndAttack::Notify(USkeletalMeshComponent* MeshComp, UAnim
 
 	if (Player)
 		Player->EndAttack();
+
+	if (Enemy)
+		Enemy->EndAttack();
 }
