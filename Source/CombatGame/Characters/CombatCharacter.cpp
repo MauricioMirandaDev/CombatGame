@@ -142,6 +142,12 @@ void ACombatCharacter::ForwardThrust()
 	UKismetSystemLibrary::MoveComponentTo(GetRootComponent(), ForwardLocation, GetActorRotation(), false, false, 0.1f, false, EMoveComponentAction::Move, LatentActionInfo);
 }
 
+// Set weapon to active or deactive
+void ACombatCharacter::SetWeaponActive(bool bWeaponActive)
+{
+	Weapon->SetHitBoxActive(bWeaponActive);
+}
+
 // Move the player forward and backward
 void ACombatCharacter::MoveForward(float Scale)
 {

@@ -37,6 +37,8 @@ public:
 
 	void ForwardThrust();
 
+	void SetWeaponActive(bool bWeaponActive);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

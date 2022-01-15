@@ -5,6 +5,8 @@
 #include "GameFramework/Character.h"
 #include "CombatEnemy.generated.h"
 
+class AWeapon; 
+
 UCLASS()
 class COMBATGAME_API ACombatEnemy : public ACharacter
 {
@@ -22,6 +24,8 @@ public:
 
 	void EndAttack();
 
+	void SetWeaponActive(bool bWeaponActive);
+
 	// Max distance the enemy can detect the player
 	UPROPERTY(EditDefaultsOnly, Category = "Enemy Behavior")
 	float DetectionRadius;
@@ -31,4 +35,10 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	// Functions, variables, and components for combat
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AWeapon> WeaponClass;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	AWeapon* Weapon;
 };
